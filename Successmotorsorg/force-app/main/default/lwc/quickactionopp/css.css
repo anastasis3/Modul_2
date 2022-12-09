@@ -1,0 +1,9 @@
+.container {
+    background-color: red;
+    padding: 16px;
+    max-height: 400px;
+}
+
+p {
+    color: red;
+}

@@ -1,0 +1,119 @@
+<apex:page standardController="Opportunity" extensions="OpportunityContactRoleController,PDFcontroller" renderAs="pdf"
+ standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false" showHeader="false">
+<html>
+<head>
+<style type="text/css">
+       .txt{
+text-align:center;
+background-color:#FF5620;
+color:white;
+font-family:sans-serif;
+            }
+         
+.column{width:800px;
+        font-family:sans-serif; 
+        font:9pt;
+        }
+.redColor{
+            background-color :  #F3F3F3;
+            height:15px;
+        }
+ .blueColor{
+            background-color : white;
+            height:15px;}      
+</style>
+</head>
+
+    <table style="font-family:sans-serif; padding-bottom:30px; border-top: 20px solid #FF5620; color:#FF5620;width:100%;background-color: #F3F3F3;">
+
+        <tr>
+            <td rowspan = "3" style ="padding-left:50px;padding-top:50px;"><apex:image id="logo" value="{!$Resource.logo}" width="80" height="80"/></td>
+            <td style="font:11pt; padding-top:60px; color:#424242;text-align:left;"> {!$Organization.Name}</td>
+        </tr>
+        <tr>
+            <td style="font:9pt; padding-top:3px;color:#424242;text-align:left;padding-right:300px;">{!$Organization.Street} </td>
+        </tr>
+        <tr>
+            <td style="font:9pt; color:#424242;text-align:left;decoration: none;"><apex:outputField style="text-decoration:none; color:black;" value="{!Opportunity.OwnerId}"/></td> 
+              
+        </tr>
+        </table>
+        
+     <table style="font-family:sans-serif;padding-left:550px;padding-bottom:30px;margin-top: -80px;background-color: #F3F3F3;width:100%; padding-right:50px;">
+         <td colspan = "2" style="font:18pt;padding-top:10px;color:#AFAFAF;text-align:center;">INVOICE</td>
+        <tr style ="border-bottom:2px;">
+            <td  style="font:9pt;font-weight: bold;padding-top:30px;color:#283848;text-align:center;border-bottom:1pt solid #AFAFAF;">
+            <apex:outputText value="{!DAY(TODAY())}-{!MONTH(TODAY())}-{!YEAR(TODAY())}"/></td>
+        </tr>
+        <tr style ="border-bottom:2px;padding-right:30px;padding-bottom:30px">
+            <td style="font:9pt;font-weight: bold;padding-top:30px;color:#333A4C;text-align:center;border-bottom:1pt solid #AFAFAF;"><apex:outputField value="{!Opportunity.Invoice_Number__c}"/></td>
+        </tr>
+       
+    </table>
+    
+    <table style="font-family:sans-serif;border: 1px solid black; width:100%;border-collapse: collapse;">
+
+    <td  style="font:9pt;font-weight: bold;padding-top:50px;padding-bottom:3px;color:#283848;text-align:left;padding-left:30px;border-bottom: 1pt solid #F3F3F3;">BILL TO</td>
+    <tr>
+    <td style="color:#424242; font:9pt;padding-left:30px;padding-top:10px;"><apex:outputField value="{!Opportunity.Account.Name }"/> </td>
+    </tr>
+    <tr>
+    <td style="color:#424242; font:9pt;padding-left:30px;padding-top:10px;">Client company name- <apex:outputField value="{!Opportunity.Account.Company_Name__c }"/></td>
+    </tr>
+    <tr>
+    <td style="color:#424242; font:9pt;padding-left:30px;padding-top:10px;"><apex:outputField value="{!Opportunity.Account.Phone }"/></td>
+    </tr>
+    <tr>
+    <td style="color:#424242; font:9pt;padding-left:30px;padding-top:10px;">Email  <apex:outputField value="{!Opportunity.Account.Email__c }"/></td>
+    </tr>
+    </table>
+     
+     <table style="font-family:sans-serif; width:100%;border-collapse: collapse;font:8pt;margin-top:30px;border-top: 1px solid #FF5620;">
+     
+     <th  style="font-family:sans-serif;background-color: #FF5620; color: white;text-align:center;">PRODUCT NAME</th>
+     <th style="font-family:sans-serif;background-color: #FF5620; color: white;text-align:center;">QTY</th>
+     <th style="font-family:sans-serif;background-color: #FF5620; color: white;text-align:center;width:25%;">UNIT PRICE</th>
+     <th style="font-family:sans-serif;background-color: #FF5620; color: white;text-align:center;width:25%;">TOTAL</th>
+     
+     <tr>
+     <td style="border-left: 0.3px solid #424242;border-bottom: 0.3px solid #424242;padding-left:1px;">
+         <apex:variable var="index" value="{!1}"/>
+    <apex:repeat value="{!opportunity.opportunityLineItems}" var="prd">
+        <div class="{!IF(MOD(index,2)==0,'redColor','blueColor')}">{!prd.Name}</div>
+        <apex:variable var="index" value="{!index+1}"/>
+    </apex:repeat>
+     </td>
+     <td style="border-left: 0.3px solid #424242;border-bottom: 0.3px solid #424242;text-align:center;">         
+     <apex:variable var="index" value="{!1}"/>
+    <apex:repeat value="{!opportunity.opportunityLineItems}" var="prd">
+        <div class="{!IF(MOD(index,2)==0,'redColor','blueColor')}">{!prd.Quantity}</div>
+        <apex:variable var="index" value="{!index+1}"/>
+    </apex:repeat>
+    </td>
+    <td style="border-left: 0.3px solid #424242;border-bottom: 0.3px solid #424242;text-align:right;padding-right:1px;">
+             <apex:variable var="index" value="{!1}"/>
+    <apex:repeat value="{!opportunity.opportunityLineItems}" var="prd">
+        <div class="{!IF(MOD(index,2)==0,'redColor','blueColor')}">{!prd.UnitPrice}</div>
+        <apex:variable var="index" value="{!index+1}"/>
+    </apex:repeat>
+    </td>
+    <td style="border-left: 0.3px solid #424242;border-bottom: 0.3px solid #424242;border-right: 0.3px solid #424242; text-align:right;padding-right:1px;">
+     <apex:variable var="index" value="{!1}"/>
+    <apex:repeat value="{!opportunity.opportunityLineItems}" var="prd">
+        <div class="{!IF(MOD(index,2)==0,'redColor','blueColor')}">{!prd.TotalPrice}</div>
+        <apex:variable var="index" value="{!index+1}"/>
+    </apex:repeat>
+    </td>
+    </tr>
+    <tr  style="height:50px">
+    <td colspan="3" style="text-align:right;font:9pt;font-weight: bold;color:#333A4C;">Balance Due</td>
+    <td style="border-bottom:1pt solid #AFAFAF;background-color:#EFCCC9;text-align:center;font:11pt;font-weight: bold;color:black;"><apex:outputField value="{!Opportunity.Amount}"/></td>
+    </tr>
+    </table>
+     
+     <div style="font-family:sans-serif;text-align:center;background-color:#FF5620;color:white;font-weight:bold;margin-top:200px;">{!$Organization.Name}</div>
+       
+    </html>
+    
+    
+</apex:page>

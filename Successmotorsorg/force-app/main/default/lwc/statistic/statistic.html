@@ -1,0 +1,213 @@
+<template>
+    <lightning-card title="Search" custom-icon="custom:icon13">
+        <div class="slds slds-p-horizontal--medium">
+         <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_4-of-12 slds-m-bottom--medium">
+                <lightning-Input type="search" placeholder="Account name..." value={accountName} name="accountName" class="accountName" onchange={handleChangeAccName}></lightning-input>                 
+             </div>
+             <div class="slds-col slds-size_6-of-12 slds-m-top--medium" style="margin-top: 19px; margin-left: 10px;">                 
+                    <lightning-button label="Search by Account Name" size="small" variant="brand" onclick={handleAccountSearch} icon-name="utility:search" icon-position="right"></lightning-button>
+             </div>
+
+
+             <div class="slds-col slds-size_2-of-12 slds-m-bottom--medium">
+                <lightning-Input type="search" placeholder="Amount..." value={Amount} name="amount" class="amount" onchange={handleChangeAmount}></lightning-input>                 
+             </div>
+             <div class="slds-col slds-size_6-of-12 slds-m-top--medium" style="margin-top: 19px; margin-left: 10px;">                 
+                    <lightning-button label="Search by Amount" size="small" variant="brand" onclick={handleAmountSearch} icon-name="utility:search" icon-position="right"></lightning-button>
+             </div>
+         </div>
+          
+         <h2>Account Name :- <span><strong>{currentAccountName}</strong></span></h2>
+         <h2>Amount :- <span><strong>{currentAmount}</strong></span></h2>
+         <h3><strong><span style="color:brown;">{dataNotFound}</span></strong></h3><br/>
+</div>
+
+
+
+
+<lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle} if:true={activeSections2} key={ss.Opportunity.Name}>
+    <div class="slds-box details-box">
+    <template for:each={records2} for:item="ss">
+    <lightning-accordion-section key={ss.Opportunity.Name} name={ss.Opportunity.Name} label={ss.Opportunity.Name} >
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Created Date</th>
+                    <th>Close Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    <tr>
+                        <td>{ss.Opportunity.Name}</td>
+                        <td>{ss.Opportunity.CreatedDate}</td>
+                        <td>{ss.Opportunity.CloseDate}</td>
+                        <td>{ss.Opportunity.Amount}</td>
+                    </tr>
+</tbody>
+</table>
+<template if:true={bShowModal2}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+       <div class="slds-modal__container">
+          <!-- modal header start -->
+          <header class="slds-modal__header">
+             <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal2}>
+                <lightning-icon icon-name="utility:close"
+                   alternative-text="close"
+                   variant="inverse"
+                   size="small" ></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+             </button>
+             <h2  class="slds-text-heading_medium slds-hyphenate">Product List</h2>
+          </header>
+          <!-- modal body start -->
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Product Namwwe</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                    <tr>
+                        <td>{ss.PricebookEntry.Product2.Name}</td>
+                        <td>{ss.Quantity}</td>
+                    </tr>
+                
+</tbody>
+</table>
+<!-- modal footer start-->
+<footer class="slds-modal__footer">
+    <button class="slds-button slds-button_neutral" onclick={closeModal2}>Cancel</button>
+</footer>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+<div class="slds-p-top_x-small">
+    <lightning-button variant="brand" label="Product List" onclick={openModal2}></lightning-button>
+</div>
+
+</lightning-accordion-section>
+
+</template>
+
+
+
+</div>
+</lightning-accordion>
+
+
+<lightning-accordion if:true={activeSections} allow-multiple-sections-open onsectiontoggle={handleSectionToggle}>
+    <template for:each={records} for:item="conItem">
+
+    <lightning-accordion-section name="B" label={searchAccountName} key={conItem.Id}>
+        <div>{conItem.TotalPrice}</div>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Created Date</th>
+                    <th>Close Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                    <tr>
+                        <td>{conItem.Opportunity.Name}</td>
+                        <td>{conItem.Opportunity.CreatedDate}</td>
+                        <td>{conItem.Opportunity.CloseDate}</td>
+                        <td>{conItem.Opportunity.Amount}</td>
+                    </tr>
+                
+            </tbody>
+        </table>
+        <div class="slds-p-top_x-small">
+            <lightning-button variant="brand" label="Product List" onclick={openModal}></lightning-button>
+        </div>
+    </lightning-accordion-section>
+</template>
+</lightning-accordion>
+
+
+<lightning-accordion if:true={activeSections3} allow-multiple-sections-open onsectiontoggle={handleSectionToggle}>
+    <template for:each={records4} for:item="conItem">
+
+    <lightning-accordion-section name="B" label={conItem.Opportunity.Name} key={conItem.Id}>
+
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Created Date</th>
+                    <th>Close Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                    <tr>
+                        <td>{conItem.Opportunity.Name}</td>
+                        <td>{conItem.Opportunity.CreatedDate}</td>
+                        <td>{conItem.Opportunity.CloseDate}</td>
+                        <td>{conItem.Opportunity.Amount}</td>
+                    </tr>
+                
+            </tbody>
+        </table>
+        <div class="slds-p-top_x-small">
+            <lightning-button variant="brand" label="Product List" onclick={openModal}></lightning-button>
+        </div>
+    </lightning-accordion-section>
+</template>
+</lightning-accordion>
+</lightning-card>
+
+
+
+
+<template if:true={bShowModal}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+       <div class="slds-modal__container">
+          <!-- modal header start -->
+          <header class="slds-modal__header">
+             <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                <lightning-icon icon-name="utility:close"
+                   alternative-text="close"
+                   variant="inverse"
+                   size="small" ></lightning-icon>
+                <span class="slds-assistive-text">Close</span>
+             </button>
+             <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Product List</h2>
+          </header>
+          <!-- modal body start -->
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={records} for:item="conItem">
+                    <tr key={conItem.Id}>
+                        <td>{conItem.PricebookEntry.Product2.Name}</td>
+                        <td>{conItem.Quantity}</td>
+                    </tr>
+                </template>
+</tbody>
+</table>
+<!-- modal footer start-->
+<footer class="slds-modal__footer">
+    <button class="slds-button slds-button_neutral" onclick={closeModal}>Cancel</button>
+</footer>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+</template>

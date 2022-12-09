@@ -1,0 +1,31 @@
+<template>
+ <div class="slds-p-around_x-small">   
+    <div class="slds-box slds-theme--default">
+    <span class="slds-text-title slds-p-around_x-small">Send to</span>
+   <span class="slds-box slds-box_x-small"><lightning-formatted-email value={email}></lightning-formatted-email></span>
+   <div>
+    <br>
+   <span class="slds-text-title slds-p-around_x-small">Subject</span>
+   <span class="slds-box slds-box_x-small">{subject}</span>
+</div>
+<div>
+    <br>
+   <span class="slds-text-title slds-p-around_x-small">Name  </span>
+   <span class="slds-box slds-box_x-small">{Name}</span>
+</div>
+<br>
+<lightning-record-view-form object-api-name={objectApiName} record-id={recordId}>
+    <lightning-output-field field-name={invoiceNumber}> </lightning-output-field>
+    <lightning-input-rich-text value={body}></lightning-input-rich-text>
+</lightning-record-view-form>
+
+<div class="slds-m-top_small">
+    <div style="padding-left: 520px;">
+        <lightning-button class="slds-p-top_medium" variant="neutral" label="View Invoice" onclick={actionToVFNav}></lightning-button>
+        <lightning-button class="slds-p-around_x-small" variant="brand" label="Send" onclick={sendEmailHandler}></lightning-button>
+        
+    </div>
+</div>
+</div>
+</div>
+</template>

@@ -1,0 +1,29 @@
+<template>
+    <section>
+      <div class="page-data-container">
+        <h1
+          class="slds-text-heading_large slds-align_absolute-center slds-m-top_small"
+        >
+          {title}
+        </h1>
+        <!-- the crucial slot -->
+        <slot></slot>
+      </div>
+      <div class="page-data-container">
+<!-- in pager.html -->
+<lightning-button-icon alternative-text="Previous" class="slds-float_left"
+  icon-class="slds-m-around_medium" icon-name="utility:chevronleft" onclick={handlePrevious}
+  variant="bare">
+  
+</lightning-button-icon>
+<lightning-button-icon
+  alternative-text="Next"
+  class="slds-float_right"
+  icon-class="slds-m-around_medium"
+  icon-name="utility:chevronright"
+  onclick={handleNext}
+  variant="bare"
+></lightning-button-icon>
+      </div>
+    </section>
+  </template>

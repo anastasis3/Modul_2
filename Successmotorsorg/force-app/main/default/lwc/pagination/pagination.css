@@ -1,0 +1,9 @@
+:host {
+    --white: rgb(255, 255, 255);
+}
+
+.page-data-container {
+    background-color: var(--white);
+    max-height: 400px;
+    overflow: hidden;
+}

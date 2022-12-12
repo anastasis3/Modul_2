@@ -2,12 +2,14 @@ public class PDFcontroller {
 
     public List<OpportunityLineItem> products {get; set;} 
     public List<OpportunityContactRole> contactRoles {get; set;} 
-    public List<User> user {get; set;} 
+   
+   private ApexPages.StandardController controller;
 
     public PDFcontroller(ApexPages.StandardController controller) {
      this.contactRoles = [SELECT Id, Role, ContactId, Contact.Name, Contact.Phone, Contact.OtherPhone, Contact.Email
                             FROM OpportunityContactRole
                             WHERE IsPrimary = true];
+     this.controller=controller;
 
     }
 
@@ -21,9 +23,7 @@ public class PDFcontroller {
     
         public void ShowContacts()
     {
-        List <OpportunityContactRole> con_role = [SELECT ContactId, Contact.Name
+        List <OpportunityContactRole> con_role = [SELECT ContactId, Contact.Email
                                                   FROM OpportunityContactRole
                                                   WHERE IsPrimary = true];
     }
-    
-}

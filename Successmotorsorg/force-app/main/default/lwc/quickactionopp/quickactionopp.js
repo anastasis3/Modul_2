@@ -1,25 +1,22 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { getSObjectValue } from '@salesforce/apex';
 
-import getSingleContact from '@salesforce/apex/ContactController.getSingleContact';
-import getOpp from '@salesforce/apex/getOppController.getOpp';
-import sendEmailTemplate from '@salesforce/apex/SendEmailController.sendEmailTemplate';
+
+import getContact from '@salesforce/apex/ContactController.getContact';
 import getEmailTemplate from '@salesforce/apex/EmailTemplateController.getEmailTemplate';
 
 import sendEmail from '@salesforce/apex/EmailHandler.sendEmail';
 
+
 import INVOICE_NUM from "@salesforce/schema/Opportunity.Invoice_Number__c";
 import INVOICE_NUMBER from "@salesforce/schema/Opportunity.Invoice_Number__c";
-import CONTACT from "@salesforce/schema/OpportunityContactRole.Contact.Name";
-import CONTACT_EMAIL from "@salesforce/schema/Contact.Email";
+import CONTACT from "@salesforce/schema/Contact.Name";
 
-import NAME_FIELD from "@salesforce/schema/Contact.Name";
-import NAME_FIELD2 from "@salesforce/schema/OpportunityContactRole.Contact.Email";
-import NAME_ACCOUNT from "@salesforce/schema/Opportunity.Account.Name";
 
-import EMAIL_FIELD from '@salesforce/schema/Contact.Email';
+import NAME_FIELD from '@salesforce/schema/OpportunityContactRole.Contact.Name';
+import EMAIL_FIELD from '@salesforce/schema/OpportunityContactRole.Contact.Email';
+
 import SUBJECT_FIELD from '@salesforce/schema/EmailTemplate.Subject';
 import BODY_FIELD from '@salesforce/schema/EmailTemplate.Body';
 
@@ -28,25 +25,26 @@ import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 
 
 export default class Quickactionopp extends NavigationMixin(LightningElement) {
-
+    @api recordId;
+    @api objectApiName;
     invoiceNumber = INVOICE_NUM;
     contactName = CONTACT;
 
     get getInvoice() {
         return this.invoiceNumber;
     }
-    @api recordId;
-    @api objectApiName;
 
 
-    @wire(sendEmailTemplate) EmailTemplate;
 
-    sendAction() {
-        this.dispatchEvent(new SendEmail());
+    /* sendAction() {
+         this.dispatchEvent(new SendEmail());
+     }*/
+
+    savePdfHundler(event) {
+        savePdf({ parentId: this.recordId, pdfName: 'SuccessmotorsPage' });
     }
 
 
-    @track subject_field = SUBJECT_FIELD;
     sendEmailHandler(event) {
         // send mail
         console.log("Sending email to", this.email);
@@ -58,16 +56,30 @@ export default class Quickactionopp extends NavigationMixin(LightningElement) {
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__webPage',
             attributes: {
-                url: '/apex/SuccessmotorsPage?id=' + this.recordId
+                url: '/apex/PAGE?id=' + this.recordId
             }
+
         }).then(generatedUrl => {
             window.open(generatedUrl);
         });
     }
+    handleCLick() {
 
+        this[NavigationMixin.Navigate]({
+            type: 'standard__namedPage',
+            attributes: {
+                pageName: 'PAGE'
+            },
+            state: {
+                recordIds: this.files.data.ContentDocumentId,
+                selectedRecordId: this.files.data.ContentDocumentId
+            }
+        });
+    }
 
+    record
 
-    @wire(getSingleContact, { recordId: '$recordId', fields: INVOICE_NUM }) contact;
+    @wire(getContact, { recordId: '$recordId', fields: [EMAIL_FIELD, NAME_FIELD] }) contact;
 
     get email() {
         return this.contact.data ? getSObjectValue(this.contact.data, EMAIL_FIELD) : '';
@@ -83,14 +95,11 @@ export default class Quickactionopp extends NavigationMixin(LightningElement) {
 
         return getFieldValue(this.opportunity.data, INVOICE_NUMBER);
     }
+
     @wire(getRecord, { recordId: '$recordId', fields: CONTACT }) opportunityContactRole;
     get contactName() {
-        return getFieldValue(this.opportunity.data, CONTACT);
+        return getFieldValue(this.opportunityContactRole.data, CONTACT);
     }
-    get contactEmail() {
-        return getFieldValue(this.opportunity.data, CONTACT_EMAIL);
-    }
-
 
     @wire(getEmailTemplate) EmailTemplate;
 

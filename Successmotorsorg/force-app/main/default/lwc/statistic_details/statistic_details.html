@@ -1,8 +1,12 @@
 <template>
-    <div class="slds-box details-box">
-       <p class="slds-text-heading_small"> Opportunities of {name}</p>
+    <lightning-card >
+
+  
+       <p class="slds-text-heading_small"> </p>
+       <lightning-accordion allow-multiple-sections-open onsectiontoggle={handleSectionToggle} if:true={records6} key={ss.Opportunity.Name}>
+        <div class="slds-box details-box">
     <template for:each={records6} for:item="ss">
-        <section key={ss.Opportunity.Name} name={ss.Opportunity.Name} label={name} class="slds-p-top_x-small">
+        <lightning-accordion-section key={ss.Opportunity.Name} name={ss.Opportunity.Name} label={ss.Name} class="slds-p-top_x-small">
         <table  class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
             <thead>
                 <tr>
@@ -63,7 +67,12 @@
 <div class="slds-p-top_x-small">
     <lightning-button variant="brand" label="Product List" onclick={openModal2}></lightning-button>
 </div>
-</section>
+</lightning-accordion-section>
 </template>
 </div>
+</lightning-accordion>
+
+
+
+</lightning-card>
 </template>

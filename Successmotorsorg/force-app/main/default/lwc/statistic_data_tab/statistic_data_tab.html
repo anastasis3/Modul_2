@@ -1,14 +1,12 @@
 <template>
-    <lightning-card>
+    <lightning-card title="Lightning Datatable Example">
         <div class="slds-m-around_medium">
-            <lightning-input type="search" onchange={handleKeyChange} class="slds-col slds-size_4-of-12 slds-m-bottom--medium" label="Search"
+            <lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small" label="Search"
                 value={searchKey}></lightning-input>
-                <lightning-input type="search" onchange={handleKeyChange2} class="slds-col slds-size_4-of-12 slds-m-bottom--medium" label="Search by $"
-                value={searchKey2}></lightning-input>
                 <lightning-accordion allow-multiple-sections-open={multiple}>
                     <template if:true={data}>
                         <template for:each={data} for:item="acc">
-                            <lightning-accordion-section name={acc.Amount} label={acc.Name} key={acc.Name}>
+                            <lightning-accordion-section name={acc.Name} label={acc.Name} key={acc.Id}>
                                 <lightning-card  title="Opportunities">
                                     <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                                         <thead>
@@ -58,48 +56,8 @@
 </template>
 </tbody>
 </table>
-<br>
-<lightning-button variant="brand" label="Opportunity Product" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+<lightning-button variant="brand" label="Show me Opportunity Product" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
 </lightning-card>
-
-<!-- bShowModal2 start -->
-<template if:true={bShowModal2}>
-    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-       <div class="slds-modal__container">
-          <!-- modal header start -->
-          <header class="slds-modal__header">
-             <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal2}>
-                <lightning-icon icon-name="utility:close"
-                   alternative-text="close"
-                   variant="inverse"
-                   size="small" ></lightning-icon>
-                <span class="slds-assistive-text">Close</span>
-             </button>
-             <h2  class="slds-text-heading_medium slds-hyphenate">Product List</h2>
-          </header>
-          <!-- modal body start -->
-         <!--- <template if:true={acc.Opportunities}></template>-->
-<div class="slds-modal__content slds-p-around_medium">
-    <template if:true={Products}>
-            <lightning-datatable show-row-number-column key-field="Id" data={Products} columns={productColumns}
-            hide-checkbox-column>
-        </lightning-datatable>
-        </template>
-    <template if:false={Products}>
-            list of product is empty
-        </template>
-
-</div>
-<!-- modal footer start-->
-<footer class="slds-modal__footer">
-    <button class="slds-button slds-button_neutral" onclick={closeModal2}>Cancel</button>
-</footer>
-</div>
-</section>
-<div class="slds-backdrop slds-backdrop_open"></div>
-</template>
-
-
 </lightning-accordion-section>
 </template>
 </template>

@@ -2,11 +2,19 @@ global class OpportunityUpdateEmailHandler implements Messaging.InboundEmailHand
     global Messaging.InboundEmailResult handleInboundEmail(
     Messaging.InboundEmail email, Messaging.InboundEnvelope envelope) {
       String subject = email.subject;
-      Pattern idPattern = Pattern.compile('006[A-Za-z0-9]{12}');
+      Pattern idPattern = Pattern.compile('(?m)^([\\w\\s]*):(.*)$');
       Matcher matcher = idPattern.matcher(subject);
-      if (!matcher.find()) System.assert(false, 'No Opportunity ID found in the Subject!');
+      if (someErrorCondition) throw new MyCustomException('Nothing opportunitie was found');
       
         Opportunity opp = [SELECT Name, StageName, InvoiceNumber__c FROM Opportunity WHERE InvoiceNumber__c = :matcher.group(0)];
+
+        String approve= 'Approve';
+        boolean approveMe;
+        approveMe=body.contains(approve);
+        String body = email.plainTextBody;
+
+        if (approveMe==true)
+        {
        if(opp.StageName=='Prospecting'){
         opp.StageName='Qualification';
        }else if(opp.StageName=='Qualification'){
@@ -21,9 +29,10 @@ global class OpportunityUpdateEmailHandler implements Messaging.InboundEmailHand
         opp.StageName='Perception Analysis';
        }
        else {
-        opp.StageName='Closed Lost';
+        opp.StageName='Closed Won';
        }
-        opp.StageName = email.plainTextBody;       
+      //  opp.StageName = email.plainTextBody;   
+      }    
         update opp;
       
       Messaging.InboundEmailresult result = new Messaging.InboundEmailResult();

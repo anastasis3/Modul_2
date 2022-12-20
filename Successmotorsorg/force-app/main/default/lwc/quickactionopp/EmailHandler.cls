@@ -9,6 +9,7 @@ public with sharing class EmailHandler {
         System.debug(body);
         System.debug(subject);
         toAddress.add('anastacia3a@gmail.com');
+        //toAddress.add('anastasiyakupr11@gmail.com');
                 
         mail.setToAddresses(toAddress);
         mail.setReplyTo('anastacia3a@gmail.com');

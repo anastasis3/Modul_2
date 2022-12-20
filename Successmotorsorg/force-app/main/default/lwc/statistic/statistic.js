@@ -1,131 +1,171 @@
-import { LightningElement, track, wire, api } from 'lwc';
-import retrieveContactData from '@salesforce/apex/ControllerData.retrieveContactData';
-import accountsData from '@salesforce/apex/ControllerAccountList.accountsData';
+import { LightningElement, wire, api, track } from 'lwc';
+import { refreshApex } from '@salesforce/apex';
+import getAcc from '@salesforce/apex/OpportunityController.getAcc';
+import getProducts from '@salesforce/apex/OpportunityController.getProducts';
 import retrieveContactDataByAmount from '@salesforce/apex/ControllerAmount.retrieveContactDataByAmount';
-import FIELDS from '@salesforce/schema/Opportunity.Name';
+import { NavigationMixin } from 'lightning/navigation';
 import AMOUNT from '@salesforce/schema/Opportunity.Amount';
-import EmailPreferencesStayInTouchReminder from '@salesforce/schema/User.EmailPreferencesStayInTouchReminder';
-import { getPagesOrDefault, handlePagerChanged } from './pagerUtils';
-
-const PAGER_NAME = "c-pager";
-
-export default class Statistic extends LightningElement {
-
-    /*pagination
-     _currentlyVisible = [];
 
 
-     getPagesOrDefault = getPagesOrDefault.bind(this);
-     handlePagerChanged = handlePagerChanged.bind(this);
-
-     @api
-     get currentlyVisible() {
-         const pages = this.getPagesOrDefault();
-         return pages.length === 0 ? this._currentlyVisible : pages;
-     }
-     set currentlyVisible(value) {
-         this._currentlyVisible = value;
-     }*/
 
 
-    handlePagerChange() {
-        this.currentlyVisible = this._getPagesOrDefault();
+import prName from '@salesforce/schema/OpportunityLineItem.Name';
+import Quantity from '@salesforce/schema/OpportunityLineItem.Quantity';
+import UnitPrice from '@salesforce/schema/OpportunityLineItem.UnitPrice';
+import TotalPrice from '@salesforce/schema/OpportunityLineItem.TotalPrice';
+import Amount from '@salesforce/schema/Opportunity.Amount';
+
+
+
+const productColumns = [
+    { label: 'Name', fieldName: prName.fieldApiName, type: 'text' },
+    { label: 'Quantity', fieldName: Quantity.fieldApiName, type: 'text' },
+    {
+        label: 'Unit Price',
+        fieldName: UnitPrice.fieldApiName,
+        type: 'currency',
+        typeAttributes: { maximumFractionDigits: '2' }
+    },
+    {
+        label: 'Total Price',
+        fieldName: TotalPrice.fieldApiName,
+        type: 'currency',
+        typeAttributes: { maximumFractionDigits: '2' }
     }
+]
 
-
-    @track currentAccountName;
-    @track searchAccountName;
-    @track searchAmount;
-    @track currentAmount;
-    @track activeSections = false;
-    @track activeSections2 = true;
-
-
-    handleSectionToggle(event) {
-        console.log(event.detail.openSections);
-    }
-
-    handleChangeAmount(event) {
-        this.currentAmount = event.target.value;
-    }
-
-    handleAmountSearch() {
-        this.searchAmount = this.currentAmount;
-        this.activeSections3 = true;
-        this.activeSections2 = false;
-    }
-
-    handleChangeAccName(event) {
-        this.currentAccountName = event.target.value;
-    }
-
-    handleAccountSearch() {
-
-        this.searchAccountName = this.currentAccountName;
-        this.activeSections = true;
-        this.activeSections2 = false;
-    }
-
-    @track totalAccount;
-    @track dataNotFound;
-    visibleAccounts
-
-    @wire(retrieveContactData, { keySearch: '$searchAccountName' })
-    wireRecord({ data, error }) {
-        if (data) {
-            this.records = data;
-            this.error = undefined;
-            this.dataNotFound = '';
-            if (this.totalAccount == '') {
-                this.dataNotFound = 'There is no Opportunities found related to Account name';
-            }
-
-        } else {
-            this.error = error;
-            this.data = undefined;
-        }
-    }
-    @wire(retrieveContactData, { recordId: '$recordId', fields: FIELDS, AMOUNT })
-    opportunity;
-
-    get name() {
-        return this.opportunity.data ? getSObjectValue(this.opportunity.data, FIELDS) + ' ' + this.AMOUNT : '';
-    }
-
-
-    @wire(retrieveContactDataByAmount, { keySearch: '$searchAmount' })
-    wireRecord2({ data, error }) {
-        if (data) {
-            this.records4 = data;
-            this.error = undefined;
-            this.dataNotFound = '';
-            if (this.totalAccount == '') {
-                this.dataNotFound = 'There is no Opportunities found related to Amount';
-            }
-
-        } else {
-            this.error = error;
-            this.data = undefined;
-        }
-    }
-
-
-
-    @track bShowModal = false;
+export default class LightningDatatableExample extends NavigationMixin(LightningElement) {
+    @track value;
+    @track error;
+    @track data;
+    @api searchKey = '';
+    @track page = 1;
+    @track items = [];
+    @track data = [];
+    @track startingRecord = 1;
+    @track endingRecord = 0;
+    @track pageSize = 10;
+    @track totalRecountCount = 0;
+    @track totalPage = 0;
+    @api recordId;
+    @track record;
     @track bShowModal2 = false;
+    @track Products;
+    productColumns = productColumns;
+    @track AMOUNT = AMOUNT;
 
 
-    openModal() {
-        this.bShowModal = true;
+
+    //@wire(retrieveContactDataByAmount, { searchKey: '$searchKey2' })
+    wiredAccounts2({ error, data2 }) {
+        //if(this.searchKey.type.)
+        if (data2) {
+
+            this.items = data2;
+            this.totalRecountCount = data2.length;
+            this.totalPage = Math.ceil(this.totalRecountCount / this.pageSize);
+
+            this.data2 = this.items.slice(0, this.pageSize);
+            this.endingRecord = this.pageSize;
+
+
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.data = undefined;
+        }
+    }
+    @wire(retrieveContactDataByAmount, { recordId: '$recordId' }) amount;
+    get amount() {
+        return getFieldValue(this.amount.data, AMOUNT) + ' close: ' + this.AMOUNT;
+        //  return this.EmailTemplate.data ? getSObjectValue(this.EmailTemplate.data, SUBJECT_FIELD) + ' ' + this.invoice_number : '';
+        //return this.account.data.fields.Name.value;
     }
 
-    closeModal() {
 
-        this.bShowModal = false;
+    @wire(getAcc, { searchKey: '$searchKey' })
+
+    wiredAccounts({ error, data }) {
+        //if(this.searchKey.type.)
+        if (data) {
+
+            this.items = data;
+            this.totalRecountCount = data.length;
+            this.totalPage = Math.ceil(this.totalRecountCount / this.pageSize);
+
+            this.data = this.items.slice(0, this.pageSize);
+            this.endingRecord = this.pageSize;
+
+
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.data = undefined;
+        }
     }
 
-    openModal2() {
+    //clicking on previous button this method will be called
+    previousHandler() {
+        if (this.page > 1) {
+            this.page = this.page - 1; //decrease page by 1
+            this.displayRecordPerPage(this.page);
+        }
+    }
+
+    //clicking on next button this method will be called
+    nextHandler() {
+        if ((this.page < this.totalPage) && this.page !== this.totalPage) {
+            this.page = this.page + 1; //increase page by 1
+            this.displayRecordPerPage(this.page);
+        }
+    }
+
+    //this method displays records page by page
+    displayRecordPerPage(page) {
+
+        this.startingRecord = ((page - 1) * this.pageSize);
+        this.endingRecord = (this.pageSize * page);
+
+        this.endingRecord = (this.endingRecord > this.totalRecountCount) ?
+            this.totalRecountCount : this.endingRecord;
+
+        this.data = this.items.slice(this.startingRecord, this.endingRecord);
+
+        this.startingRecord = this.startingRecord + 1;
+    }
+    numberField;
+    handleKeyChange(event) {
+        if (event.target.dataset.id === 'numberField') {
+            this.numberField = event.target.value;
+        }
+        this.searchKey = event.target.value;
+        return refreshApex(this.result);
+    }
+    numberField2;
+    handleKeyChange2(event) {
+        if (event.target.dataset.id === 'numberField2') {
+            this.numberField2 = event.target.value;
+        }
+        this.searchKey2 = event.target.value;
+        return refreshApex(this.result);
+    }
+
+    openModal2(row) {
         this.bShowModal2 = true;
+        this.record = row;
+
+        getProducts({ ids: '$searchKey' })
+            .then(result => {
+
+                if (result.length >= 1) {
+                    this.Products = result;
+                } else {
+                    this.Products = null;
+                }
+            })
+            .catch(error => {
+                console.log('open modal wndow error');
+            });
     }
 
     closeModal2() {
@@ -133,72 +173,15 @@ export default class Statistic extends LightningElement {
         this.bShowModal2 = false;
     }
 
-    @wire(accountsData) opportunityLineItem;
-
-
-    updateAccountHundler(event) {
-        this.visibleAccounts = [...event.detail.records]
-        console.log(event.detail.records)
-
+    handleClick() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: {
+                recordId: '0065h00000GP52TAAT',
+                objectApiName: 'OpportunityLineItem',
+                relationshipApiName: 'OpportunityLineItems',
+                actionName: 'view'
+            },
+        });
     }
-
-    /*pagination
-    @track totalRecordCount
-    @track totalPage
-    @track endingRecord = 0
-    @track pageSize = 3
-    @track startingRecord = 1
-        */
-    @track records2
-    @wire(accountsData) opportunityLineItem2({ data, error }) {
-        if (data) {
-
-            this.records2 = data;
-            // this.totalRecordCount = data.lenght;
-            //this.totalPage = Math.ceil(this.totalRecordCount / this.PageSize)
-            //this.data = this.records2.slice(0, this.pageSize)
-            //this.endingRecord = this.pageSize
-            console.log(this.records)
-
-            //this.updateRecords()
-
-        } else if (error) {
-            console.log(error);
-        }
-    }
-
-    prevHandler(event) {
-        if (this.page > 1) {
-            this.page = this.page - 1;
-            this.displayRecordPage(this.page)
-        }
-
-    }
-
-    nextHandler(event) {
-        if (this.page < this.totalPage && this.page !== this.totalPage) {
-            this.page = this.page + 1;
-            this.displayRecordPage(this.page)
-        }
-    }
-
-    displayRecordPage(page) {
-        this.startingRecord = (page - 1) * this.pageSize;
-        this.endingRecord = page * this.pageSize;
-        this.endingRecord = (this.endingRecord > this.totalRecordCount) ? this.totalRecordCount : this.endingRecord;
-        this.data = this.records2.slice(this.startingRecord, this.endingRecord);
-        this.startingRecord = this.startingRecord + 1;
-    }
-
-
-
-
-    /*let selectedAccId = event.target.name;
-    this.accountId = selectedAccId;
-    let selectedAccLocalId = event.target.Id;
-    this.filteredConList = this.conList.filter(function(currentItem, Index, array) {
-        if (currentItem.AccountId == selectedAccId) {
-            return currentItem;
-        }
-    });*/
 }

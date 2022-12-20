@@ -1,0 +1,6 @@
+<apex:page action="{!createPDFFile}" extensions="PDFcontroller" standardController="Opportunity"  >
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:detail inlineEdit="true" relatedList="true"></apex:detail>
+  
+ 
+</apex:page>
